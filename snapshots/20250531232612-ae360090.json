@@ -1,0 +1,25 @@
+{
+  "scan_id": "20250531232612-ae360090",
+  "created_at": "2025-05-31T16:26:28.565098",
+  "scan_directory": "temp\\20250531232612-ae360090\\extracted",
+  "files": {
+    "index.php": {
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "modified": "2025-05-31T23:26:12.842902",
+      "permissions": "666"
+    },
+    "malicious.php": {
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "modified": "2025-05-31T23:26:12.842902",
+      "permissions": "666"
+    },
+    "wp-config.php": {
+      "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0,
+      "modified": "2025-05-31T23:26:12.858414",
+      "permissions": "666"
+    }
+  }
+}

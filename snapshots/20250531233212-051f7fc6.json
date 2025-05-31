@@ -1,0 +1,25 @@
+{
+  "scan_id": "20250531233212-051f7fc6",
+  "created_at": "2025-05-31T16:32:21.759661",
+  "scan_directory": "temp\\20250531233212-051f7fc6\\extracted",
+  "files": {
+    "index.php": {
+      "hash": "497ce5bbb6e90124d3411ba0a14dbd3f87d16626f05da2b01d9de73b6725f06b",
+      "size": 115,
+      "modified": "2025-05-31T23:32:12.178113",
+      "permissions": "666"
+    },
+    "malicious.php": {
+      "hash": "e1708f753535b4b8519dab8cbee4c3bac57754ff9e4488ec112da5236a93f64d",
+      "size": 317,
+      "modified": "2025-05-31T23:32:12.178113",
+      "permissions": "666"
+    },
+    "wp-config.php": {
+      "hash": "8f5f63b127f1d49c9e69e1a544eb5004aad3f3fcb42cf82f115b49b767d6b3cc",
+      "size": 480,
+      "modified": "2025-05-31T23:32:12.178113",
+      "permissions": "666"
+    }
+  }
+}

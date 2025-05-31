@@ -1,0 +1,31 @@
+{
+  "summary": {
+    "scan_id": "20250531232612-ae360090",
+    "scan_type": "upload",
+    "status": "running",
+    "total_files_scanned": 0,
+    "new_files": 0,
+    "changed_files": 0,
+    "deleted_files": 0,
+    "suspicious_files": 0,
+    "critical_findings": 0,
+    "high_risk_findings": 0,
+    "medium_risk_findings": 0,
+    "low_risk_findings": 0,
+    "scan_duration": 0.056265,
+    "created_at": "2025-05-31T16:26:12.858414",
+    "completed_at": null
+  },
+  "findings": [],
+  "wp_version": null,
+  "wp_plugins": [],
+  "wp_themes": [],
+  "recommendations": [
+    "\ud83d\udd04 Keep WordPress core, themes, and plugins updated to latest versions",
+    "\ud83d\udd10 Use strong passwords and enable two-factor authentication",
+    "\ud83d\udee1\ufe0f Install a WordPress security plugin for ongoing monitoring",
+    "\ud83d\udccb Regularly backup your WordPress site",
+    "\ud83d\udeab Remove unused themes and plugins",
+    "\ud83d\udcc1 Set proper file permissions (644 for files, 755 for directories)"
+  ]
+}

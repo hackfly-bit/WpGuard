@@ -1,0 +1,10 @@
+fastapi>=0.68.0
+uvicorn[standard]>=0.15.0
+aiofiles>=0.7.0
+python-multipart>=0.0.5
+pydantic>=1.8.0
+paramiko>=2.7.0
+APScheduler>=3.8.0
+sqlalchemy>=1.4.0
+pytest>=6.2.0
+pytest-asyncio>=0.15.0
