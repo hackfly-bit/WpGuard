@@ -14,8 +14,8 @@ def run_server():
     from app.core.config import settings
     uvicorn.run(
         "app.main:app",
-        host=settings.HOST,
-        port=settings.PORT,
+        # host=settings.HOST,
+        port=5000,
         reload=True,
         log_level="info"
     )

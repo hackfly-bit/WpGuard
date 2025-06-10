@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     TEMP_DIR: str = "temp"
     SNAPSHOTS_DIR: str = "snapshots"
     REPORTS_DIR: str = "reports"
-    UPLOAD_MAX_SIZE: int = 100 * 1024 * 1024  # 100MB
+    UPLOAD_MAX_SIZE: int = 15 * 1024 * 1024 * 1024  # 15GB
     
     # Database
     DATABASE_URL: str = "sqlite:///./wpguard.db"

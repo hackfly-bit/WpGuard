@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WPGuard - WordPress Security Scanner</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>WPGuard</span>
+                </div>
+                <nav class="nav">                    <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="#upload" class="nav-link" data-section="upload">
+                        <i class="fas fa-upload"></i> Upload
+                    </a>
+                    <a href="#ftp" class="nav-link" data-section="ftp">
+                        <i class="fas fa-server"></i> FTP
+                    </a>
+                    <a href="#scans" class="nav-link" data-section="scans">
+                        <i class="fas fa-search"></i> Scans
+                    </a>
+                    <a href="#security" class="nav-link" data-section="security">
+                        <i class="fas fa-shield-alt"></i> Security
+                    </a>
+                    <a href="#reports" class="nav-link" data-section="reports">
+                        <i class="fas fa-file-alt"></i> Reports
+                    </a>
+                </nav>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="refresh-btn" id="refreshBtn">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="section active">
+                <div class="section-header">
+                    <h1>Security Dashboard</h1>
+                    <p>Monitor your WordPress sites' security status</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-search text-blue"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalScans">--</div>
+                            <div class="stat-label">Total Scans</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle text-orange"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="activeThreat">--</div>
+                            <div class="stat-label">Active Threats</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt text-green"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="cleanSites">--</div>
+                            <div class="stat-label">Clean Sites</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock text-purple"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="runningScan">--</div>
+                            <div class="stat-label">Running Scans</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Scans -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-history"></i> Recent Scans</h2>
+                        <button class="btn btn-sm btn-outline" id="refreshScans">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-container">
+                            <table class="data-table" id="recentScansTable">
+                                <thead>
+                                    <tr>
+                                        <th>Scan ID</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Files</th>
+                                        <th>Threats</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="loading-row">
+                                        <td colspan="7">
+                                            <div class="loading">
+                                                <i class="fas fa-spinner fa-spin"></i> Loading scans...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section id="upload-section" class="section">
+                <div class="section-header">
+                    <h1>Upload WordPress Site</h1>
+                    <p>Upload a ZIP or TAR.GZ archive of your WordPress installation</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <form id="uploadForm" class="upload-form">
+                            <div class="upload-area" id="uploadArea">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <div class="upload-text">
+                                    <h3>Drag & drop your WordPress archive here</h3>
+                                    <p>or <button type="button" class="link-btn" id="browseBtn">browse files</button></p>
+                                    <small>Supports ZIP, TAR.GZ files up to 15 GB</small>
+                                </div>
+                                <input type="file" id="fileInput" accept=".zip,.tar.gz,.tar" hidden>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="scanName">Scan Name (Optional)</label>
+                                <input type="text" id="scanName" placeholder="e.g., Production Site Scan">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" disabled id="uploadBtn">
+                                    <i class="fas fa-upload"></i> Upload & Scan
+                                </button>
+                                <button type="button" class="btn btn-outline" id="clearUpload">
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Upload Progress -->
+                        <div class="upload-progress hidden" id="uploadProgress">
+                            <div class="progress-header">
+                                <span id="progressText">Uploading...</span>
+                                <span id="progressPercent">0%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="progress-info">
+                                <small id="progressInfo">Preparing upload...</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FTP Section -->
+            <section id="ftp-section" class="section">
+                <div class="section-header">
+                    <h1>FTP/SFTP Connection</h1>
+                    <p>Connect to your server via FTP or SFTP to scan WordPress files</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-content">
+                        <form id="ftpForm" class="form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ftpHost">Host *</label>
+                                    <input type="text" id="ftpHost" placeholder="ftp.example.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ftpPort">Port</label>
+                                    <input type="number" id="ftpPort" value="21" min="1" max="65535">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="ftpUsername">Username *</label>
+                                    <input type="text" id="ftpUsername" placeholder="ftpuser" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ftpPassword">Password *</label>
+                                    <input type="password" id="ftpPassword" placeholder="••••••••" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ftpPath">Remote Path</label>
+                                <input type="text" id="ftpPath" placeholder="/public_html" value="/public_html">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ftpScanName">Scan Name (Optional)</label>
+                                <input type="text" id="ftpScanName" placeholder="e.g., Live Site Scan">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="useSftp">
+                                    <span class="checkmark"></span>
+                                    Use SFTP (Secure FTP)
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline" id="testFtpBtn">
+                                    <i class="fas fa-plug"></i> Test Connection
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-download"></i> Connect & Scan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scans Section -->
+            <section id="scans-section" class="section">
+                <div class="section-header">
+                    <h1>Scan Management</h1>
+                    <p>Monitor and manage your security scans</p>
+                </div>
+
+                <!-- Scan Filters -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-filter"></i> Filters</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="filter-group">
+                            <div class="form-group">
+                                <label for="statusFilter">Status</label>
+                                <select id="statusFilter">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="running">Running</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="failed">Failed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="typeFilter">Type</label>
+                                <select id="typeFilter">
+                                    <option value="">All Types</option>
+                                    <option value="upload">Upload</option>
+                                    <option value="ftp">FTP</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary" id="applyFilters">
+                                    <i class="fas fa-search"></i> Apply Filters
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scans Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-list"></i> All Scans</h2>
+                        <button class="btn btn-sm btn-outline" id="refreshAllScans">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-container">
+                            <table class="data-table" id="allScansTable">
+                                <thead>
+                                    <tr>
+                                        <th>Scan ID</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Files</th>
+                                        <th>Threats</th>
+                                        <th>Duration</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="loading-row">
+                                        <td colspan="9">
+                                            <div class="loading">
+                                                <i class="fas fa-spinner fa-spin"></i> Loading scans...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>            </section>
+
+            <!-- Advanced Security Section -->
+            <section id="security-section" class="section">
+                <div class="section-header">
+                    <h1>Advanced Security</h1>
+                    <p>ML-enhanced security analysis and threat intelligence</p>
+                </div>
+
+                <!-- Security Metrics Dashboard -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-brain text-purple"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="mlThreats">--</div>
+                            <div class="stat-label">ML Detections</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line text-blue"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="securityScore">--</div>
+                            <div class="stat-label">Security Score</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye text-green"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="complianceScore">--</div>
+                            <div class="stat-label">Compliance %</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-circle text-red"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="criticalRecommendations">--</div>
+                            <div class="stat-label">Critical Actions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Scan Controls -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-magic"></i> ML-Enhanced Scan</h2>
+                    </div>
+                    <div class="card-content">
+                        <form id="advancedScanForm" class="form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="mlScanPath">Scan Path *</label>
+                                    <input type="text" id="mlScanPath" placeholder="/path/to/wordpress" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="mlScanName">Scan Name</label>
+                                    <input type="text" id="mlScanName" placeholder="ML Security Scan">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="section-label">Detection Options</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enableMlDetection" checked>
+                                        <span class="checkmark"></span>
+                                        Enable ML-Enhanced Detection
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="enableWpSpecific" checked>
+                                        <span class="checkmark"></span>
+                                        WordPress-Specific Checks
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="includeCompliance" checked>
+                                        <span class="checkmark"></span>
+                                        Compliance Analysis
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="generateRecommendations" checked>
+                                        <span class="checkmark"></span>
+                                        Generate Recommendations
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxFiles">Maximum Files to Scan</label>
+                                <input type="number" id="maxFiles" value="1000" min="100" max="10000">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-brain"></i> Start ML Scan
+                                </button>
+                                <button type="button" class="btn btn-outline" id="viewTrends">
+                                    <i class="fas fa-chart-line"></i> View Trends
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Top Threats -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-virus"></i> Top Threats Detected</h2>
+                        <button class="btn btn-sm btn-outline" id="refreshThreats">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="threatsContainer">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Loading threat intelligence...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Recommendations -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-lightbulb"></i> Security Recommendations</h2>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-priority="all">All</button>
+                            <button class="filter-tab" data-priority="critical">Critical</button>
+                            <button class="filter-tab" data-priority="high">High</button>
+                            <button class="filter-tab" data-priority="medium">Medium</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="recommendationsContainer">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Loading recommendations...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance Dashboard -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-check-circle"></i> Compliance Status</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="compliance-grid" id="complianceGrid">
+                            <div class="compliance-item">
+                                <div class="compliance-header">
+                                    <h3>WordPress Security</h3>
+                                    <div class="compliance-score" id="wpComplianceScore">--</div>
+                                </div>
+                                <div class="compliance-details" id="wpComplianceDetails">
+                                    <div class="loading-sm">Loading...</div>
+                                </div>
+                            </div>
+                            <div class="compliance-item">
+                                <div class="compliance-header">
+                                    <h3>Web Security</h3>
+                                    <div class="compliance-score" id="webComplianceScore">--</div>
+                                </div>
+                                <div class="compliance-details" id="webComplianceDetails">
+                                    <div class="loading-sm">Loading...</div>
+                                </div>
+                            </div>
+                            <div class="compliance-item">
+                                <div class="compliance-header">
+                                    <h3>File Security</h3>
+                                    <div class="compliance-score" id="fileComplianceScore">--</div>
+                                </div>
+                                <div class="compliance-details" id="fileComplianceDetails">
+                                    <div class="loading-sm">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports-section" class="section">
+                <div class="section-header">
+                    <h1>Security Reports</h1>
+                    <p>Detailed analysis and findings from your scans</p>
+                </div>
+
+                <!-- Report Viewer -->
+                <div class="card" id="reportViewer" style="display: none;">
+                    <div class="card-header">
+                        <h2 id="reportTitle">Scan Report</h2>
+                        <div class="card-actions">
+                            <button class="btn btn-sm btn-outline" id="downloadReport">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-sm btn-outline" id="closeReport">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content" id="reportContent">
+                        <!-- Report content will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Reports List -->
+                <div class="card" id="reportsListCard">
+                    <div class="card-header">
+                        <h2><i class="fas fa-file-alt"></i> Available Reports</h2>
+                    </div>
+                    <div class="card-content">
+                        <div class="reports-grid" id="reportsGrid">
+                            <div class="loading">
+                                <i class="fas fa-spinner fa-spin"></i> Loading reports...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-content">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span id="loadingText">Processing...</span>
+        </div>
+    </div>
+
+    <!-- Scan Details Modal -->
+    <div class="modal-overlay hidden" id="scanModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">Scan Details</h2>
+                <button class="modal-close" id="closeScanModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content" id="modalContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

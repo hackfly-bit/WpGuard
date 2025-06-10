@@ -344,3 +344,57 @@ async def test_ftp_connection(ftp_request: FTPRequest):
             
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Connection test failed: {str(e)}")
+
+# Internal function for scheduled scans
+async def connect_ftp_internal(ftp_config: dict, scan_id: str) -> dict:
+    """Internal FTP connection function for scheduled scans"""
+    try:
+        # Create scan directory
+        scan_dir = Path(settings.TEMP_DIR) / scan_id
+        scan_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Extract config
+        host = ftp_config.get("host")
+        port = ftp_config.get("port", 21)
+        username = ftp_config.get("username")
+        password = ftp_config.get("password")
+        remote_path = ftp_config.get("remote_path", "/")
+        use_sftp = ftp_config.get("use_sftp", False)
+        scan_name = ftp_config.get("scan_name", "Scheduled Scan")
+        
+        # Create FTP request object
+        ftp_request = FTPRequest(
+            host=host,
+            port=port,
+            username=username,
+            password=password,
+            remote_path=remote_path,
+            use_sftp=use_sftp,
+            scan_name=scan_name
+        )
+        
+        # Download files
+        if use_sftp:
+            download_stats = await _download_via_sftp(ftp_request, scan_dir)
+        else:
+            download_stats = await _download_via_ftp(ftp_request, scan_dir)
+        
+        # Find WordPress root
+        wp_root = await _find_wordpress_root(scan_dir)
+        if not wp_root:
+            return {"success": False, "error": "WordPress installation not found"}
+        
+        # Generate baseline snapshot
+        from app.scanner.baseline import create_baseline_snapshot
+        snapshot = await create_baseline_snapshot(scan_id, wp_root)
+        
+        return {
+            "success": True,
+            "scan_id": scan_id,
+            "wordpress_root": str(wp_root.relative_to(scan_dir)),
+            "total_files": len(snapshot["files"]),
+            "download_stats": download_stats
+        }
+        
+    except Exception as e:
+        return {"success": False, "error": str(e)}
